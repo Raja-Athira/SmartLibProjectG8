@@ -8,7 +8,7 @@ public class HistoryStack {
     
     public void push(Book book){
 
-        Book newBook = new Book(0, null, null);
+        Book newBook = new Book(book.getIsbn(), book.getTitle(), book.getAuthor());
         newBook.setRight(top);
         top = newBook;
 
@@ -21,7 +21,7 @@ public class HistoryStack {
             return null;
         }
         Book temp = top;
-        top = top.right;
+        top = top.getRight();
 
         return temp;
     }
