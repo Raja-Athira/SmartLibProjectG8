@@ -8,6 +8,11 @@ public class HistoryStack {
     
     public void push(Book book){
 
+        if(book == null){
+            System.out.println("Error! No book is added to history");
+            return;
+        }
+
         Book newBook = new Book(book.getIsbn(), book.getTitle(), book.getAuthor());
         newBook.setRight(top);
         top = newBook;
@@ -38,4 +43,22 @@ public class HistoryStack {
         return top == null;
     }
 
+    public void displayHistory(){
+
+        if(isEmpty()){
+            System.out.println("No history found");
+            return;
+        }
+        Book current = top;
+        System.out.println("\nBorrowing History");
+
+        while (current != null) {
+            System.out.println("ISBN  : " + current.getIsbn());
+            System.out.println("Title : " + current.getTitle());
+            System.out.println("Author: " + current.getAuthor());
+            System.out.println("--------------------");
+
+            current = current.getRight();
+        }
+    }
 }
