@@ -2,12 +2,14 @@ package com.smartlibprojectgroup8;
 
 interface LibraryADT {
     Book searchBook(int isbn);
-    Book searchBookInBorrowHistory(int isbn);
-    Book getBookToReturn();
+    Book searchBookInInventory(int isbn);
+    int getInventorySize();
+
     void addBook(int isbn, String title, String author);
     void borrowBook(Book toBorrow);
-    void returnBook();
+    void returnBook(Book toReturn);
     
+    void viewInventory();
     void viewLatestHistory();
     void showBookCatalogue();
 
@@ -18,6 +20,7 @@ interface LibraryADT {
 public class LibrarySystem implements LibraryADT {    
     private final BookBST Catalogue = new BookBST();
     private final HistoryStack BorrowHistory = new HistoryStack();
+    private final BorrowInventory Inventory = new BorrowInventory();
 
     @Override
     public Book searchBook(int isbn) {
@@ -25,13 +28,13 @@ public class LibrarySystem implements LibraryADT {
     }
 
     @Override
-    public Book searchBookInBorrowHistory(int isbn) {
-        return BorrowHistory.search(isbn);
+    public Book searchBookInInventory(int isbn) {
+        return Inventory.search(isbn);
     }
 
     @Override
-    public Book getBookToReturn() {
-        return BorrowHistory.peek();
+    public int getInventorySize() {
+        return Inventory.size();
     }
 
     @Override
@@ -44,15 +47,22 @@ public class LibrarySystem implements LibraryADT {
         if (toBorrow != null) {
             Catalogue.remove(toBorrow);
             BorrowHistory.push(toBorrow);
+            Inventory.add(toBorrow);
         }
     }
 
     @Override
-    public void returnBook() {
-        Book toReturn = BorrowHistory.pop();
+    public void returnBook(Book toReturn) {
         if (toReturn != null) {
-            Catalogue.insert(toReturn);
+            Book toReturnClone = new Book(toReturn.getIsbn(), toReturn.getTitle(), toReturn.getAuthor());
+            Catalogue.insert(toReturnClone);
+            Inventory.removeBook(toReturn.getIsbn());
         }
+    }
+
+    @Override
+    public void viewInventory() {
+        Inventory.printList();
     }
 
     @Override

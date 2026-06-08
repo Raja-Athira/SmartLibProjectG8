@@ -2,6 +2,7 @@ package com.smartlibprojectgroup8;
 
 public class HistoryStack {
     private Book top;
+    
 
     public void push(Book book){
         if (book == null) return;

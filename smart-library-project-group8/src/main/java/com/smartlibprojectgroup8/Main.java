@@ -50,6 +50,7 @@ class Menu {
         "Search Book",
         "Borrow Book",
         "Return Book",
+        "View My Inventory",
         "View Borrow History",
         "Exit",
     };
@@ -70,8 +71,9 @@ class Menu {
                 case 3 -> searchBookMenu();
                 case 4 -> borrowBookMenu();
                 case 5 -> returnBookMenu();
-                case 6 -> borrowHistoryMenu();
-                case 7 -> {
+                case 6 -> borrowInventoryMenu();
+                case 7 -> borrowHistoryMenu();
+                case 8 -> {
                     System.out.println("Are you sure you want to exit?");
                     if (promptAndChoose(YesNoOptions, in) == 1) exit = true;
                 }
@@ -243,7 +245,7 @@ class Menu {
     private boolean borrowBookMenu2(Book toBorrow) {
         boolean returnToMenu = false;
         if (toBorrow == null) return returnToMenu;
-        Book inBorrowHistory = MainLibrarySystem.searchBookInBorrowHistory(toBorrow.getIsbn());
+        Book inBorrowHistory = MainLibrarySystem.searchBookInInventory(toBorrow.getIsbn());
         if (inBorrowHistory != null && inBorrowHistory.getIsbn() == toBorrow.getIsbn()) { // Book is already being borrowed
             System.out.println("Book is already in Borrowing History!\n");
             int Selection = promptAndChoose(BorrowBookOptions2, in);
@@ -291,34 +293,60 @@ class Menu {
         "Return to Main Menu"
     };
 
+    private final static String[] ReturnBookOptions3 = {
+        "Try Again",
+        "Return to Main Menu"
+    };
+
     private void returnBookMenu(){
         boolean returnToMenu = false;
         while (!returnToMenu) { 
             printTitle("Return Book");
-            Book returningBook = MainLibrarySystem.getBookToReturn();
-            if (returningBook != null) {
-                System.out.println("Book to Return:\n" + returningBook);
+            MainLibrarySystem.viewInventory();
+            System.out.println("");
+
+            boolean stopAsking = false;
+            while (!stopAsking) { 
+                System.out.print("Enter Book ISBN: ");
+                int isbn = in.nextInt();
                 System.out.println("");
-                int Selection = promptAndChoose(ReturnBookOptions, in);
-                switch(Selection) {
-                    case 1 -> {
-                        MainLibrarySystem.returnBook();
-                        System.out.println("\nBook Successfully Returned!\n");
-                        returnToMenu = promptAndChoose(ReturnBookOptions2, in) == 2;
+
+                Book returningBook = MainLibrarySystem.searchBookInInventory(isbn);
+                if (returningBook != null) {
+                    System.out.println("Book to Return:\n" + returningBook);
+                    System.out.println("");
+                    int Selection = promptAndChoose(ReturnBookOptions, in);
+                    switch(Selection) {
+                        case 1 -> {
+                            MainLibrarySystem.returnBook(returningBook);
+                            System.out.println("\nBook Successfully Returned!\n");
+                            returnToMenu = promptAndChoose(ReturnBookOptions2, in) == 2;
+                        }
+                        case 2 -> {
+                            returnToMenu = true;
+                        }
+                        default -> {
+                            promptInvalidOption();
+                            returnToMenu = true;
+                        }
                     }
-                    case 2 -> {
-                        returnToMenu = true;
-                    }
-                    default -> {
-                        promptInvalidOption();
-                        returnToMenu = true;
+                    break;
+                } else {
+                    System.out.println("That book isn't in your inventory.\n");
+                    int Selection = promptAndChoose(ReturnBookOptions3, in);
+                    switch(Selection) {
+                        case 1 -> {}
+                        case 2 -> {
+                            stopAsking = true;
+                            returnToMenu = true;
+                        }
+                        default -> {
+                            promptInvalidOption();
+                            stopAsking = true;
+                            returnToMenu = true;
+                        }
                     }
                 }
-                
-            } else {
-                System.out.println("You have no books borrowed.\n");
-                promptToMainMenu();
-                returnToMenu = true;
             }
         }
     }
@@ -332,7 +360,28 @@ class Menu {
         printTitle("Borrow History");
         MainLibrarySystem.viewLatestHistory();
         System.out.println("");
-        if (MainLibrarySystem.getBookToReturn() == null) { // No books to return = no history
+        if (MainLibrarySystem.getInventorySize() == 0) {
+            promptToMainMenu();
+            return;
+        }
+        int Selection = promptAndChoose(BorrowHistoryOptions, in);
+        switch(Selection) {
+            case 1 -> {
+                returnBookMenu();
+            }
+            case 2 -> {}
+            default -> {
+                promptInvalidOption();
+                promptToMainMenu();
+            }
+        }
+    }
+
+    private void borrowInventoryMenu(){
+        printTitle("Books You're Borrowing");
+        MainLibrarySystem.viewInventory();
+        System.out.println("");
+        if (MainLibrarySystem.getInventorySize() == 0) {
             promptToMainMenu();
             return;
         }
