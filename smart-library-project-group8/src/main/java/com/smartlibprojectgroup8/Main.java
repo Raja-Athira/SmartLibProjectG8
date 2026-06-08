@@ -168,8 +168,7 @@ class Menu {
                     default -> promptInvalidOption();
                 }
             } else {
-                foundBook.printDetails();
-                System.out.println("");
+                System.out.println(foundBook);
                 int Selection = promptAndChoose(FoundBookOptions, in);
                 System.out.println("");
                 switch(Selection) {
@@ -245,8 +244,7 @@ class Menu {
                 }
             }
         } else {
-            toBorrow.printDetails();
-            System.out.println("\nConfirm to borrow this book?");
+            System.out.println(toBorrow + "\nConfirm to borrow this book?");
             int Selection = promptAndChoose(BorrowBookOptions, in);
             switch(Selection) {
                 case 1 -> {
@@ -277,7 +275,6 @@ class Menu {
         System.out.println("| " + WELCOME_MESSAGE + " |");
         System.out.println(DASH);
         mainMenu();
-        MainLibrarySystem.saveCatalogueToFile(FILENAME);
     }
 }
 
