@@ -1,0 +1,8 @@
+ISBN, TITLE, AUTHOR
+1, Larp Kaisen, Jane Juliet
+2, Man, Tatsuki Fujimoto
+3, Mid Piece, Eiichiro Oda
+4, JoJo's Bizzare Adventure, Hirohiko Araki
+5, Bleach, Tite Kubo
+6, Math, John Math
+7, Physics, John Physics

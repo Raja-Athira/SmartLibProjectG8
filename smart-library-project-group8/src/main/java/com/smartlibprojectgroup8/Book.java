@@ -1,8 +1,9 @@
+package com.smartlibprojectgroup8;
 
 public class Book {
-    private int isbn;
-    private String title;
-    private String author;
+    private final int isbn;
+    private final String title;
+    private final String author;
     private Book left;
     private Book right;
 
@@ -22,7 +23,12 @@ public class Book {
     public void setLeft(Book left) { this.left = left; }
     public void setRight(Book right) { this.right = right; }
 
+    @Override
     public String toString() {
-        return "ISBN: " + isbn + " | Title: " + title + " | Author: " + author;
+        return "\'" + title + "\' by " + author + " (ISBN: " + isbn + ")";
+    }
+
+    public void printDetails() {
+        System.out.println("\'" + title + "\' by " + author + " (ISBN: " + isbn + ")");
     }
 }
