@@ -66,12 +66,7 @@ class Menu {
             int Selection = promptAndChoose(MainMenuOptions, in);
             switch(Selection) {
                 case 1 -> addBookMenu();
-                case 2 -> {
-                    printTitle("Book Catalogue");
-                    MainLibrarySystem.showBookCatalogue();
-                    System.out.println("");
-                    promptToMainMenu();
-                }
+                case 2 -> bookCatalogueMenu();
                 case 3 -> searchBookMenu();
                 case 4 -> borrowBookMenu();
                 case 5 -> returnBookMenu();
@@ -134,6 +129,28 @@ class Menu {
                 }
             }
 
+        }
+    };
+
+    private final static String[] BookCatalogueOptions = {
+        "Borrow a Book",
+        "Return to Main Menu"
+    };
+
+    private void bookCatalogueMenu(){
+        printTitle("Book Catalogue");
+        MainLibrarySystem.showBookCatalogue();
+        System.out.println("");
+        int Selection = promptAndChoose(BookCatalogueOptions, in);
+        switch(Selection) {
+            case 1 -> {
+                borrowBookMenu();
+            }
+            case 2 -> {}
+            default -> {
+                promptInvalidOption();
+                promptToMainMenu();
+            }
         }
     };
 
