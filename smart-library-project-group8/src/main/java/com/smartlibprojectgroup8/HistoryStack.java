@@ -50,7 +50,7 @@ public class HistoryStack {
         int i = 1;
 
         while (current != null) {
-            System.out.print(i++ + " " + current);
+            System.out.println(i++ + " " + current);
             current = current.getRight();
         }
     }
