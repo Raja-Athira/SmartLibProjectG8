@@ -3,8 +3,10 @@ package com.smartlibprojectgroup8;
 interface LibraryADT {
     Book searchBook(int isbn);
     Book searchBookInBorrowHistory(int isbn);
+    Book getBookToReturn();
     void addBook(int isbn, String title, String author);
     void borrowBook(Book toBorrow);
+    void returnBook();
     
     void viewLatestHistory();
     void showBookCatalogue();
@@ -28,6 +30,11 @@ public class LibrarySystem implements LibraryADT {
     }
 
     @Override
+    public Book getBookToReturn() {
+        return BorrowHistory.peek();
+    }
+
+    @Override
     public void addBook(int isbn, String title, String author) {
         Catalogue.insert(new Book(isbn, title, author));
     }
@@ -35,7 +42,16 @@ public class LibrarySystem implements LibraryADT {
     @Override
     public void borrowBook(Book toBorrow) {
         if (toBorrow != null) {
+            Catalogue.remove(toBorrow);
             BorrowHistory.push(toBorrow);
+        }
+    }
+
+    @Override
+    public void returnBook() {
+        Book toReturn = BorrowHistory.pop();
+        if (toReturn != null) {
+            Catalogue.insert(toReturn);
         }
     }
 

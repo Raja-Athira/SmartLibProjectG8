@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Queue;
 
 public class BookBST {
@@ -20,6 +22,7 @@ public class BookBST {
 
         int rootIsbn = currentRoot.getIsbn();
         int newIsbn = newBook.getIsbn();
+        newBook.setParent(currentRoot);
 
         if (newIsbn < rootIsbn) {
             currentRoot.setLeft(insertRec(currentRoot.getLeft(), newBook));
@@ -28,6 +31,46 @@ public class BookBST {
             currentRoot.setRight(insertRec(currentRoot.getRight(), newBook));
         }
         
+        return currentRoot;
+    }
+
+    public Book remove(Book removeBook) {
+        if (removeBook == null) return null;
+        
+        if (removeBook.getRight() == null && removeBook.getLeft() == null) {
+            Book parent = removeBook.getParent();
+            if (parent.getLeft().equals(removeBook)) parent.setLeft(null);
+            if (parent.getRight().equals(removeBook)) parent.setRight(null);
+            if (root.equals(removeBook)) root = null;
+        } else if (removeBook.getRight() != null && removeBook.getLeft() != null) {
+            Book successor = getSuccessor(removeBook);
+            successor.setLeft(removeBook.getLeft());
+            successor.setRight(removeBook.getRight());
+            successor.setParent(removeBook.getParent());
+
+            if (root.equals(removeBook)) root = successor;
+            
+            if (removeBook.getLeft() != null) removeBook.getLeft().setParent(successor);
+            if (removeBook.getRight() != null) removeBook.getRight().setParent(successor);
+        } else if (removeBook.getRight() == null && removeBook.getLeft() != null){
+            Book successor = removeBook.getLeft();
+            successor.setParent(removeBook.getParent());
+            if (root.equals(removeBook)) root = successor;
+        } else if (removeBook.getLeft() == null && removeBook.getRight() != null){
+            Book successor = removeBook.getRight();
+            successor.setParent(removeBook.getParent());
+            if (root.equals(removeBook)) root = successor;
+        }
+
+        removeBook.setParent(null);
+
+        return removeBook;
+    }
+
+    private Book getSuccessor(Book currentRoot){
+        currentRoot = currentRoot.getRight();
+        while (currentRoot != null && currentRoot.getLeft() != null)
+            currentRoot = currentRoot.getLeft();
         return currentRoot;
     }
 
@@ -66,7 +109,8 @@ public class BookBST {
     private void printListRec(int i, Queue<Book> traverseQueue) {
         Book currentBook = traverseQueue.poll();
 
-        System.out.print(i++ + " " + currentBook);
+        System.out.println(i++ + " " + currentBook);
+        //System.out.println("Parent: " + currentBook.getParent());
 
         if (currentBook.getRight() != null) traverseQueue.add(currentBook.getRight());
         if (currentBook.getLeft() != null) traverseQueue.add(currentBook.getLeft());
@@ -75,24 +119,49 @@ public class BookBST {
         printListRec(i, traverseQueue);
     }
 
-    // Load and Save with a .csv file
+    private void buildBalancedTree(ArrayList<Book> booksArray) {
+        // Sort the array by ISBN
+        booksArray.sort(Comparator.comparingInt(Book::getIsbn));
+        root = buildBalancedTreeRec(booksArray, null,  0, booksArray.size() - 1);
+    }
+
+    private Book buildBalancedTreeRec(ArrayList<Book> booksArray, Book parent, int start, int end) {
+        // Base case
+        if (start > end) 
+            return null;
+        
+        int mid = (start + end) / 2;
+        Book currentRoot = booksArray.get(mid);
+        
+        if (currentRoot == null) return null;
+
+        currentRoot.setParent(parent);
+        currentRoot.setLeft(buildBalancedTreeRec(booksArray, currentRoot, start, mid - 1));
+        currentRoot.setRight(buildBalancedTreeRec(booksArray, currentRoot, mid + 1, end));
+
+        return currentRoot;
+    }
+
+    // Load and Save with a .csv/.txt file
 
     public void loadFromFile(String filename) {
         String regex = "\\s*\\d+\\s*,\\s*.*\\s*,\\s*.*\\s*";
+        ArrayList<Book> booksArray = new ArrayList<>();
         try (BufferedReader Reader = new BufferedReader(new FileReader(filename))) {
             String line = Reader.readLine();
             while (line != null) {
                 if (line.matches(regex)) {
-
+                    
                     String[] separatedStrings = line.split(",");
                     int isbn = Integer.parseInt(separatedStrings[0].strip());
                     String title = separatedStrings[1].strip();
                     String author = separatedStrings[2].strip();
 
-                    insert(new Book(isbn, title, author));
+                    booksArray.add(new Book(isbn, title, author));
                 }
                 line = Reader.readLine();
             }
+            buildBalancedTree(booksArray);
         } catch (Exception e) {
             System.out.println(e);
         }

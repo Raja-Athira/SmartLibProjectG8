@@ -49,6 +49,7 @@ class Menu {
         "View Book Catalogue",
         "Search Book",
         "Borrow Book",
+        "Return Book",
         "View Borrow History",
         "Exit",
     };
@@ -73,13 +74,14 @@ class Menu {
                 }
                 case 3 -> searchBookMenu();
                 case 4 -> borrowBookMenu();
-                case 5 -> {
+                case 5 -> returnBookMenu();
+                case 6 -> {
                     printTitle("Borrow History");
                     MainLibrarySystem.viewLatestHistory();
                     System.out.println("");
                     promptToMainMenu();
                 }
-                case 6 -> {
+                case 7 -> {
                     System.out.println("Are you sure you want to exit?");
                     if (promptAndChoose(YesNoOptions, in) == 1) exit = true;
                 }
@@ -267,6 +269,47 @@ class Menu {
         return returnToMenu;
     }
     
+    private final static String[] ReturnBookOptions = {
+        "Return Book",
+        "Return to Main Menu"
+    };
+
+    private final static String[] ReturnBookOptions2 = {
+        "Return Another Book",
+        "Return to Main Menu"
+    };
+
+    private void returnBookMenu(){
+        boolean returnToMenu = false;
+        while (!returnToMenu) { 
+            printTitle("Return Book");
+            Book returningBook = MainLibrarySystem.getBookToReturn();
+            if (returningBook != null) {
+                System.out.println("Book to Return:\n" + returningBook);
+                System.out.println("");
+                int Selection = promptAndChoose(ReturnBookOptions, in);
+                switch(Selection) {
+                    case 1 -> {
+                        MainLibrarySystem.returnBook();
+                        System.out.println("\nBook Successfully Returned!\n");
+                        returnToMenu = promptAndChoose(ReturnBookOptions2, in) == 2;
+                    }
+                    case 2 -> {
+                        returnToMenu = true;
+                    }
+                    default -> {
+                        promptInvalidOption();
+                        returnToMenu = true;
+                    }
+                }
+                
+            } else {
+                System.out.println("You have no books borrowed.\n");
+                promptToMainMenu();
+                returnToMenu = true;
+            }
+        }
+    }
 
     public void start(Scanner in){
         this.in = in;
