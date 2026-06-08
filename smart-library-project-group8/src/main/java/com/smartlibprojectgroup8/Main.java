@@ -70,12 +70,7 @@ class Menu {
                 case 3 -> searchBookMenu();
                 case 4 -> borrowBookMenu();
                 case 5 -> returnBookMenu();
-                case 6 -> {
-                    printTitle("Borrow History");
-                    MainLibrarySystem.viewLatestHistory();
-                    System.out.println("");
-                    promptToMainMenu();
-                }
+                case 6 -> borrowHistoryMenu();
                 case 7 -> {
                     System.out.println("Are you sure you want to exit?");
                     if (promptAndChoose(YesNoOptions, in) == 1) exit = true;
@@ -324,6 +319,32 @@ class Menu {
                 System.out.println("You have no books borrowed.\n");
                 promptToMainMenu();
                 returnToMenu = true;
+            }
+        }
+    }
+    
+    private final static String[] BorrowHistoryOptions = {
+        "Return a Book",
+        "Return to Main Menu"
+    };
+
+    private void borrowHistoryMenu(){
+        printTitle("Borrow History");
+        MainLibrarySystem.viewLatestHistory();
+        System.out.println("");
+        if (MainLibrarySystem.getBookToReturn() == null) { // No books to return = no history
+            promptToMainMenu();
+            return;
+        }
+        int Selection = promptAndChoose(BorrowHistoryOptions, in);
+        switch(Selection) {
+            case 1 -> {
+                returnBookMenu();
+            }
+            case 2 -> {}
+            default -> {
+                promptInvalidOption();
+                promptToMainMenu();
             }
         }
     }
