@@ -20,9 +20,22 @@ public class Book {
     public Book getLeft() { return left; }
     public Book getRight() { return right; }
     public Book getParent() { return parent; }
-    public void setLeft(Book left) { this.left = left; }
-    public void setRight(Book right) { this.right = right; }
-    public void setParent(Book parent) { this.parent = parent; }
+    public void setLeft(Book left) {
+        this.left = left;
+        left.setParent(this);
+    }
+    public void setRight(Book right) {
+        this.right = right;
+        right.setParent(this);
+    }
+    public void setParent(Book parent) {
+        this.parent = parent;
+    }
+
+    public void removeChild(Book child) {
+        if (left.equals(child)) left = null;
+        if (right.equals(child)) right = null;
+    }
 
     @Override
     public String toString() {

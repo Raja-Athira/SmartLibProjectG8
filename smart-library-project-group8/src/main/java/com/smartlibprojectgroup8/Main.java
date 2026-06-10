@@ -1,4 +1,5 @@
 package com.smartlibprojectgroup8;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class Menu {
@@ -9,37 +10,42 @@ class Menu {
     LibrarySystem MainLibrarySystem = new LibrarySystem();
     private Scanner in;
 
-    private static void printTitle(String title) {
+    private static void printTitle(String title) { // Prints title for menus
         System.out.println("");
         System.out.println(DASH);
         System.out.println(" " + title);
         System.out.println(DASH);
     }
 
-    private static int promptAndChoose(String[] Options, Scanner in) {
+    private static int promptAndChoose(String[] Options, Scanner in) { // Prompts user to choose between options
         for (int i = 1; i <= Options.length; i++) {
             System.out.println(i + "  " + Options[i-1]);
         }
 
         System.out.println("");
         while (true) {
-            System.out.print("Select Your Action (1-" + Options.length + "): ");
-            int Selection = in.nextInt();
-            if (Selection < 1 || Selection > Options.length) {
+            try {
+                System.out.print("Select Your Action (1-" + Options.length + "): ");
+                int Selection = in.nextInt();
+                if (Selection < 1 || Selection > Options.length) {
+                    System.out.println("Invalid Option!");
+                } else {
+                    return Selection;
+                }
+            } catch(InputMismatchException e) {
                 System.out.println("Invalid Option!");
-            } else {
-                return Selection;
+                in.nextLine();
             }
         }
     }
 
-    private void promptToMainMenu() {
+    private void promptToMainMenu() { // Prompts user to press Enter to go back to Main Menu
         System.out.println("Press Enter to return to Main Menu");
         in.nextLine();
         in.nextLine();
     }
 
-    private void promptInvalidOption() {
+    private void promptInvalidOption() { // If user chooses an invalid option from promptAndChoose (just in case)
         System.out.println("\nUnknown Option; Returning to Main Menu");
         promptToMainMenu();
     }
@@ -60,7 +66,7 @@ class Menu {
         "No",
     };
 
-    private void mainMenu(){
+    private void mainMenu(){ // Main Menu
         boolean exit = false;
         while (!exit) { 
             printTitle("Main Menu");
@@ -88,44 +94,48 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void addBookMenu(){
+    private void addBookMenu(){ // Add Books Menu
         boolean returnToMenu = false;
-        while (!returnToMenu) { 
-            printTitle("Add Book");
+        while (!returnToMenu) {
+            try {
+                printTitle("Add Book");
 
-            System.out.print("Enter Book ISBN: ");
-            int isbn = in.nextInt();
-            in.nextLine();
+                System.out.print("Enter Book ISBN: ");
+                int isbn = in.nextInt();
+                in.nextLine();
 
-            System.out.print("Enter Book Title: ");
-            String title = in.nextLine();
+                System.out.print("Enter Book Title: ");
+                String title = in.nextLine();
 
-            System.out.print("Enter Book Author: ");
-            String author = in.nextLine();
+                System.out.print("Enter Book Author: ");
+                String author = in.nextLine();
 
-            System.out.println("");
-            System.out.println("Title: " + title);
-            System.out.println("Author: " + author);
-            System.out.println("ISBN: " + isbn);
+                System.out.println("");
+                System.out.println("Title: " + title);
+                System.out.println("Author: " + author);
+                System.out.println("ISBN: " + isbn);
 
-            System.out.println("");
-            System.out.println("Confirm Adding Book?");
-            int Selection = promptAndChoose(AddBookOptions, in);
-            switch(Selection) {
-                case 1 -> {
-                    MainLibrarySystem.addBook(isbn, title, author);
-                    System.out.println("\nSuccessfully added book!");
-                    promptToMainMenu();
-                    returnToMenu = true;
+                System.out.println("");
+                System.out.println("Confirm Adding Book?");
+                int Selection = promptAndChoose(AddBookOptions, in);
+                switch(Selection) {
+                    case 1 -> {
+                        MainLibrarySystem.addBook(isbn, title, author);
+                        System.out.println("\nSuccessfully added book!");
+                        promptToMainMenu();
+                        returnToMenu = true;
+                    }
+                    case 2 -> {}
+                    case 3 -> returnToMenu = true;
+                    default -> {
+                        promptInvalidOption();
+                        returnToMenu = true;
+                    }
                 }
-                case 2 -> {}
-                case 3 -> returnToMenu = true;
-                default -> {
-                    promptInvalidOption();
-                    returnToMenu = true;
-                }
+            } catch(InputMismatchException e) {
+                System.out.println("Invalid Input!");
+                in.nextLine();
             }
-
         }
     };
 
@@ -134,7 +144,7 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void bookCatalogueMenu(){
+    private void bookCatalogueMenu(){ // Book Catalogue Menu
         printTitle("Book Catalogue");
         MainLibrarySystem.showBookCatalogue();
         System.out.println("");
@@ -161,42 +171,47 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void searchBookMenu() {
+    private void searchBookMenu() { // Search Book Menu
         boolean returnToMenu = false;
-        while (!returnToMenu) { 
-            printTitle("Search Book");
+        while (!returnToMenu) {
+            try {
+                printTitle("Search Book");
 
-            System.out.print("Enter Book ISBN: ");
-            int isbn = in.nextInt();
-            in.nextLine();
+                System.out.print("Enter Book ISBN: ");
+                int isbn = in.nextInt();
+                in.nextLine();
 
-            System.out.println("");
-
-            Book foundBook = MainLibrarySystem.searchBook(isbn);
-            if (foundBook == null) {
-                System.out.println("Book not found!\n");
-                int Selection = promptAndChoose(NotFoundBookOptions, in);
-                switch(Selection) {
-                    case 1 -> {}
-                    case 2 -> {
-                        returnToMenu = true;
-                    }
-                    default -> promptInvalidOption();
-                }
-            } else {
-                System.out.println(foundBook);
-                int Selection = promptAndChoose(FoundBookOptions, in);
                 System.out.println("");
-                switch(Selection) {
-                    case 1 -> returnToMenu = borrowBookMenu2(foundBook);
-                    case 2 -> {
-                        returnToMenu = true;
+
+                Book foundBook = MainLibrarySystem.searchBook(isbn);
+                if (foundBook == null) {
+                    System.out.println("Book not found!\n");
+                    int Selection = promptAndChoose(NotFoundBookOptions, in);
+                    switch(Selection) {
+                        case 1 -> {}
+                        case 2 -> {
+                            returnToMenu = true;
+                        }
+                        default -> promptInvalidOption();
                     }
-                    default -> {
-                        promptInvalidOption();
-                        returnToMenu = true;
+                } else {
+                    System.out.println(foundBook);
+                    int Selection = promptAndChoose(FoundBookOptions, in);
+                    System.out.println("");
+                    switch(Selection) {
+                        case 1 -> returnToMenu = borrowBookMenu2(foundBook);
+                        case 2 -> {
+                            returnToMenu = true;
+                        }
+                        default -> {
+                            promptInvalidOption();
+                            returnToMenu = true;
+                        }
                     }
                 }
+            } catch(InputMismatchException e) {
+                System.out.println("Invalid Input!");
+                in.nextLine();
             }
         }
     }
@@ -212,37 +227,42 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void borrowBookMenu(){
+    private void borrowBookMenu(){ // Borrow Book Menu Part 1
         boolean returnToMenu = false;
         while (!returnToMenu) { 
-            printTitle("Borrow Book");
+            try {
+                printTitle("Borrow Book");
 
-            System.out.print("Enter Book ISBN: ");
-            int isbn = in.nextInt();
+                System.out.print("Enter Book ISBN: ");
+                int isbn = in.nextInt();
 
-            System.out.println("");
+                System.out.println("");
 
-            Book toBorrow = MainLibrarySystem.searchBook(isbn);
-            if (toBorrow == null) {
-                System.out.println("Book not found!\n");
-                int Selection = promptAndChoose(BorrowBookOptions2, in);
-                switch(Selection) {
-                    case 1 -> {}
-                    case 2 -> {
-                        returnToMenu = true;
+                Book toBorrow = MainLibrarySystem.searchBook(isbn);
+                if (toBorrow == null) {
+                    System.out.println("Book not found!\n");
+                    int Selection = promptAndChoose(BorrowBookOptions2, in);
+                    switch(Selection) {
+                        case 1 -> {}
+                        case 2 -> {
+                            returnToMenu = true;
+                        }
+                        default -> {
+                            promptInvalidOption();
+                            returnToMenu = true;
+                        }
                     }
-                    default -> {
-                        promptInvalidOption();
-                        returnToMenu = true;
-                    }
+                } else {
+                    returnToMenu = borrowBookMenu2(toBorrow);
                 }
-            } else {
-                returnToMenu = borrowBookMenu2(toBorrow);
+            } catch(InputMismatchException e) {
+                System.out.println("Invalid Input!");
+                in.nextLine();
             }
         }
     }
 
-    private boolean borrowBookMenu2(Book toBorrow) {
+    private boolean borrowBookMenu2(Book toBorrow) { // Borrow Book Menu Part 2; This is used by both Borrow Book Menu and Search Book Menu
         boolean returnToMenu = false;
         if (toBorrow == null) return returnToMenu;
         Book inBorrowHistory = MainLibrarySystem.searchBookInInventory(toBorrow.getIsbn());
@@ -298,7 +318,7 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void returnBookMenu(){
+    private void returnBookMenu(){ // Return Book Menu
         boolean returnToMenu = false;
         while (!returnToMenu) { 
             printTitle("Return Book");
@@ -307,45 +327,50 @@ class Menu {
 
             boolean stopAsking = false;
             while (!stopAsking) { 
-                System.out.print("Enter Book ISBN: ");
-                int isbn = in.nextInt();
-                System.out.println("");
-
-                Book returningBook = MainLibrarySystem.searchBookInInventory(isbn);
-                if (returningBook != null) {
-                    System.out.println("Book to Return:\n" + returningBook);
+                try {
+                    System.out.print("Enter Book ISBN: ");
+                    int isbn = in.nextInt();
                     System.out.println("");
-                    int Selection = promptAndChoose(ReturnBookOptions, in);
-                    switch(Selection) {
-                        case 1 -> {
-                            MainLibrarySystem.returnBook(returningBook);
-                            System.out.println("\nBook Successfully Returned!\n");
-                            returnToMenu = promptAndChoose(ReturnBookOptions2, in) == 2;
+
+                    Book returningBook = MainLibrarySystem.searchBookInInventory(isbn);
+                    if (returningBook != null) { // Book is found in Borrowing Inventory
+                        System.out.println("Book to Return:\n" + returningBook);
+                        System.out.println("");
+                        int Selection = promptAndChoose(ReturnBookOptions, in);
+                        switch(Selection) {
+                            case 1 -> {
+                                MainLibrarySystem.returnBook(returningBook);
+                                System.out.println("\nBook Successfully Returned!\n");
+                                returnToMenu = promptAndChoose(ReturnBookOptions2, in) == 2;
+                            }
+                            case 2 -> {
+                                returnToMenu = true;
+                            }
+                            default -> {
+                                promptInvalidOption();
+                                returnToMenu = true;
+                            }
                         }
-                        case 2 -> {
-                            returnToMenu = true;
-                        }
-                        default -> {
-                            promptInvalidOption();
-                            returnToMenu = true;
+                        break;
+                    } else { // Book isn't found in Borrowing Inventory
+                        System.out.println("That book isn't in your inventory.\n");
+                        int Selection = promptAndChoose(ReturnBookOptions3, in);
+                        switch(Selection) {
+                            case 1 -> {}
+                            case 2 -> {
+                                stopAsking = true;
+                                returnToMenu = true;
+                            }
+                            default -> {
+                                promptInvalidOption();
+                                stopAsking = true;
+                                returnToMenu = true;
+                            }
                         }
                     }
-                    break;
-                } else {
-                    System.out.println("That book isn't in your inventory.\n");
-                    int Selection = promptAndChoose(ReturnBookOptions3, in);
-                    switch(Selection) {
-                        case 1 -> {}
-                        case 2 -> {
-                            stopAsking = true;
-                            returnToMenu = true;
-                        }
-                        default -> {
-                            promptInvalidOption();
-                            stopAsking = true;
-                            returnToMenu = true;
-                        }
-                    }
+                } catch(InputMismatchException e) {
+                    System.out.println("Invalid Input!");
+                    in.nextLine();
                 }
             }
         }
@@ -356,7 +381,7 @@ class Menu {
         "Return to Main Menu"
     };
 
-    private void borrowHistoryMenu(){
+    private void borrowHistoryMenu(){ // Borrowing History Menu
         printTitle("Borrow History");
         MainLibrarySystem.viewLatestHistory();
         System.out.println("");
@@ -377,7 +402,7 @@ class Menu {
         }
     }
 
-    private void borrowInventoryMenu(){
+    private void borrowInventoryMenu(){ // Borrowing Inventory Menu
         printTitle("Books You're Borrowing");
         MainLibrarySystem.viewInventory();
         System.out.println("");
@@ -398,7 +423,7 @@ class Menu {
         }
     }
 
-    public void start(Scanner in){
+    public void start(Scanner in){ // Start Main Menu
         this.in = in;
         MainLibrarySystem.loadCatalogueFromFile(FILENAME);
         System.out.println(DASH);

@@ -54,8 +54,7 @@ public class LibrarySystem implements LibraryADT {
     @Override
     public void returnBook(Book toReturn) {
         if (toReturn != null) {
-            Book toReturnClone = new Book(toReturn.getIsbn(), toReturn.getTitle(), toReturn.getAuthor());
-            Catalogue.insert(toReturnClone);
+            Catalogue.insert(toReturn);
             Inventory.removeBook(toReturn.getIsbn());
         }
     }

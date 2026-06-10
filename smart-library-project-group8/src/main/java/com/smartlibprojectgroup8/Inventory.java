@@ -21,7 +21,7 @@ class BorrowInventory extends ArrayList<Book> {
     public Book removeBook(int isbn) {
         Book foundBook = search(isbn);
         if (foundBook != null) {
-            remove(foundBook); 
+            remove(foundBook);
             return foundBook;
         }
         return null;

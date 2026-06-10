@@ -36,19 +36,23 @@ public class BookBST {
         return currentRoot;
     }
 
-    public Book remove(Book removeBook) {
-        if (removeBook == null) return null;
+    public void remove(Book removeBook) {
+        if (removeBook == null) return;
         
         if (removeBook.getRight() == null && removeBook.getLeft() == null) {
             Book parent = removeBook.getParent();
-            if (parent.getLeft().equals(removeBook)) parent.setLeft(null);
-            if (parent.getRight().equals(removeBook)) parent.setRight(null);
+            if (parent != null) {
+                parent.removeChild(removeBook);
+            }
+            
             if (root.equals(removeBook)) root = null;
         } else if (removeBook.getRight() != null && removeBook.getLeft() != null) {
+            Book parent = removeBook.getParent();
             Book successor = getSuccessor(removeBook);
             Book successorParent = successor.getParent();
-            if (successorParent.getLeft().equals(successor)) successorParent.setLeft(null);
-            if (successorParent.getRight().equals(successor)) successorParent.setRight(null);
+            if (successorParent != null) {
+                successorParent.removeChild(successor);
+            }
 
             successor.setLeft(removeBook.getLeft());
             successor.setRight(removeBook.getRight());
@@ -56,28 +60,25 @@ public class BookBST {
 
             if (root.equals(removeBook)) root = successor;
             
-            if (removeBook.getLeft() != null) removeBook.getLeft().setParent(successor);
-            if (removeBook.getRight() != null) removeBook.getRight().setParent(successor);
-
-        } else {
-            Book successor;
-            if (removeBook.getLeft() != null){
-                successor = removeBook.getLeft();
-            } else {
-                successor = removeBook.getRight();
+            if (parent != null) {
+                parent.removeChild(removeBook);
             }
+        } else {
+            Book successor = (removeBook.getRight() != null) ? removeBook.getRight() : removeBook.getLeft();
+            if (successor != null) {
+                Book successorParent = successor.getParent();
+                if (successorParent != null) {
+                    successorParent.removeChild(successor);
+                }
 
-            Book successorParent = successor.getParent();
-            if (successorParent.getLeft().equals(successor)) successorParent.setLeft(null);
-            if (successorParent.getRight().equals(successor)) successorParent.setRight(null);
-
-            successor.setParent(removeBook.getParent());
-            if (root.equals(removeBook)) root = successor;
+                successor.setParent(removeBook.getParent());
+                if (root.equals(removeBook)) root = successor;
+            }
         }
 
         removeBook.setParent(null);
-
-        return removeBook;
+        removeBook.setRight(null);
+        removeBook.setLeft(null);
     }
 
     private Book getSuccessor(Book currentRoot){
