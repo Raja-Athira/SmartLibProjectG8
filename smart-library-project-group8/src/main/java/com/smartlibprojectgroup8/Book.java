@@ -20,14 +20,21 @@ public class Book {
     public Book getLeft() { return left; }
     public Book getRight() { return right; }
     public Book getParent() { return parent; }
+
     public void setLeft(Book left) {
         this.left = left;
-        left.setParent(this);
+        if (left != null) {
+            left.setParent(this);
+        }
     }
+
     public void setRight(Book right) {
         this.right = right;
-        right.setParent(this);
+        if (right != null) {
+            right.setParent(this);
+        }
     }
+
     public void setParent(Book parent) {
         this.parent = parent;
     }

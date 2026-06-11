@@ -164,6 +164,7 @@ public class BookBST {
     public void loadFromFile(String filename) {
         String regex = "\\s*\\d+\\s*,\\s*.*\\s*,\\s*.*\\s*";
         ArrayList<Book> booksArray = new ArrayList<>();
+        System.out.println("Reading Books from File...");
         try (BufferedReader Reader = new BufferedReader(new FileReader(filename))) {
             String line = Reader.readLine();
             while (line != null) {
@@ -178,9 +179,10 @@ public class BookBST {
                 }
                 line = Reader.readLine();
             }
+            System.out.println("Read file successfully: Loading " + booksArray.size() + " books...");
             buildBalancedTree(booksArray);
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error reading file! Error stack\n" + e);
         }
     }
 
