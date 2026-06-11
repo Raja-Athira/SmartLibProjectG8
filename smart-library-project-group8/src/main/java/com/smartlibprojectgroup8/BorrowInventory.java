@@ -1,7 +1,7 @@
 package com.smartlibprojectgroup8;
 import java.util.ArrayList;
 
-class BorrowInventory extends ArrayList<Book> {
+public class BorrowInventory extends ArrayList<Book> {
     @Override
     public boolean add(Book newBook){
         if (search(newBook.getIsbn()) != null) return true;
