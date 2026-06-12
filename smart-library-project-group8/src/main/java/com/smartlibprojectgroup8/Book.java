@@ -1,9 +1,17 @@
 package com.smartlibprojectgroup8;
-
+/**
+ -Book class represents a book in the Smart Library System.
+ -Each book contains ISBN, title, author, and tree references
+ -for BST implementation (parent, left, right children).
+ */
 public class Book {
+    //Unique International Standard Book Number - used as BST key 
     private final int isbn;
+    //Title of the book
     private final String title;
+    // Author of the book
     private final String author;
+    // Parent node in BST - used for deletion operations
     private Book parent;
     private Book left;
     private Book right;
