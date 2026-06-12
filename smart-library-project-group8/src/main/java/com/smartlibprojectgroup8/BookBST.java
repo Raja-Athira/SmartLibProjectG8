@@ -44,31 +44,38 @@ public class BookBST {
 
     public void remove(Book removeBook) {
         if (removeBook == null) return;
-        
+
+        //case 1: leaf node (no children)
         if (removeBook.getRight() == null && removeBook.getLeft() == null) {
             Book parent = removeBook.getParent();
             if (parent != null) {
-                parent.removeChild(removeBook);
+                parent.removeChild(removeBook); //remove node from its parent
             }
+        if (root.equals(removeBook)) root = null;
             
-            if (root.equals(removeBook)) root = null;
+            //case 2: node with 2 children
         } else if (removeBook.getRight() != null && removeBook.getLeft() != null) {
             Book parent = removeBook.getParent();
             Book successor = getSuccessor(removeBook);
             Book successorParent = successor.getParent();
+            //detach successor from its original position
             if (successorParent != null) {
                 successorParent.removeChild(successor);
             }
-
+            // replace removeBook with successor
             successor.setLeft(removeBook.getLeft());
             successor.setRight(removeBook.getRight());
             successor.setParent(removeBook.getParent());
 
+            // Update root if removing root
             if (root.equals(removeBook)) root = successor;
-            
+
+            // Remove reference from parent
             if (parent != null) {
                 parent.removeChild(removeBook);
             }
+
+            // case 3: node with the child
         } else {
             Book successor = (removeBook.getRight() != null) ? removeBook.getRight() : removeBook.getLeft();
             if (successor != null) {
@@ -81,7 +88,7 @@ public class BookBST {
                 if (root.equals(removeBook)) root = successor;
             }
         }
-
+        // disconnect the removed code completely
         removeBook.setParent(null);
         removeBook.setRight(null);
         removeBook.setLeft(null);
