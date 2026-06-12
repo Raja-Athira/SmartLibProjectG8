@@ -9,30 +9,36 @@ import java.util.Comparator;
 import java.util.Queue;
 
 public class BookBST {
+    // root node of BST (Starting node for all operations)
     private Book root;
-    
+
+    /* Public insert method - called by other classes.
+    - Starts the recursive insertion process from the root. */
     public void insert(Book newBook) {
         root = insertRec(root, newBook);
     }
 
     private Book insertRec(Book currentRoot, Book newBook) {
+        // if current spot empty, insert new book (base case)
         if (currentRoot == null) {
             return newBook;
         }
 
         int rootIsbn = currentRoot.getIsbn();
         int newIsbn = newBook.getIsbn();
+        // set parent reference before recursion for easier tracking
         newBook.setParent(currentRoot);
-
+        // if new ISBN < current ISBN, go left
         if (newIsbn < rootIsbn) {
             currentRoot.setLeft(insertRec(currentRoot.getLeft(), newBook));
             if (currentRoot.getLeft() != null) currentRoot.getLeft().setParent(currentRoot);
         }
+        // if new ISBN > current ISBN, go right
         else if (newIsbn > rootIsbn) {
             currentRoot.setRight(insertRec(currentRoot.getRight(), newBook));
             if (currentRoot.getRight() != null) currentRoot.getRight().setParent(currentRoot);
         }
-        
+        // if new ISBN =current ISBN, no changes
         return currentRoot;
     }
 
