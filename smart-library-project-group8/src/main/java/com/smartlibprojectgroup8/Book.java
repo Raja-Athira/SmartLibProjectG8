@@ -47,7 +47,7 @@ public class Book {
             left.setParent(this);
         }
     }
-    parent; }
+    
 
     /* Sets the right child and establishes parent-child relationship, 
      right Book node to become right child */
@@ -72,8 +72,9 @@ public class Book {
       The child node to remove (must be left or right)
      */
     public void removeChild(Book child) {
-        if (left.equals(child)) left = null;
-        if (right.equals(child)) right = null;
+        if (child == null) return;
+        if (left != null && left.equals(child)) left = null;
+        if (right != null && right.equals(child)) right = null;
     }
 
 
