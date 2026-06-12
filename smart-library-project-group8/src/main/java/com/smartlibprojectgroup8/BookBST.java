@@ -10,60 +10,73 @@ import java.util.Comparator;
 import java.util.Queue;
 
 public class BookBST {
+    // root node of BST (Starting node for all operations)
     private Book root;
-    
+
+    /* Public insert method - called by other classes.
+    - Starts the recursive insertion process from the root. */
     public void insert(Book newBook) {
         root = insertRec(root, newBook);
     }
 
     private Book insertRec(Book currentRoot, Book newBook) {
+        // if current spot empty, insert new book (base case)
         if (currentRoot == null) {
             return newBook;
         }
 
         int rootIsbn = currentRoot.getIsbn();
         int newIsbn = newBook.getIsbn();
+        // set parent reference before recursion for easier tracking
         newBook.setParent(currentRoot);
-
+        // if new ISBN < current ISBN, go left
         if (newIsbn < rootIsbn) {
             currentRoot.setLeft(insertRec(currentRoot.getLeft(), newBook));
             if (currentRoot.getLeft() != null) currentRoot.getLeft().setParent(currentRoot);
         }
+        // if new ISBN > current ISBN, go right
         else if (newIsbn > rootIsbn) {
             currentRoot.setRight(insertRec(currentRoot.getRight(), newBook));
             if (currentRoot.getRight() != null) currentRoot.getRight().setParent(currentRoot);
         }
-        
+        // if new ISBN =current ISBN, no changes
         return currentRoot;
     }
 
     public void remove(Book removeBook) {
         if (removeBook == null) return;
-        
+
+        //case 1: leaf node (no children)
         if (removeBook.getRight() == null && removeBook.getLeft() == null) {
             Book parent = removeBook.getParent();
             if (parent != null) {
-                parent.removeChild(removeBook);
+                parent.removeChild(removeBook); //remove node from its parent
             }
+        if (root.equals(removeBook)) root = null;
             
-            if (root.equals(removeBook)) root = null;
+            //case 2: node with 2 children
         } else if (removeBook.getRight() != null && removeBook.getLeft() != null) {
             Book parent = removeBook.getParent();
             Book successor = getSuccessor(removeBook);
             Book successorParent = successor.getParent();
+            //detach successor from its original position
             if (successorParent != null) {
                 successorParent.removeChild(successor);
             }
-
+            // replace removeBook with successor
             successor.setLeft(removeBook.getLeft());
             successor.setRight(removeBook.getRight());
             successor.setParent(removeBook.getParent());
 
+            // Update root if removing root
             if (root.equals(removeBook)) root = successor;
-            
+
+            // Remove reference from parent
             if (parent != null) {
                 parent.removeChild(removeBook);
             }
+
+            // case 3: node with the child
         } else {
             Book successor = (removeBook.getRight() != null) ? removeBook.getRight() : removeBook.getLeft();
             if (successor != null) {
@@ -76,7 +89,7 @@ public class BookBST {
                 if (root.equals(removeBook)) root = successor;
             }
         }
-
+        // disconnect the removed code completely
         removeBook.setParent(null);
         removeBook.setRight(null);
         removeBook.setLeft(null);
@@ -93,19 +106,21 @@ public class BookBST {
         return searchRec(root, isbn);
     }
 
+    //case: book not found = null
     private Book searchRec(Book current, int isbn){
         if (current == null){
             return null;
         }
-
+    //case 2: book is found (matching isbn)
         if (isbn == current.getIsbn()){
             return current;
         }
 
+    //Recursive: isbn smaller (search left tree)
         if (isbn < current.getIsbn()){
             return searchRec(current.getLeft(), isbn);
         }
-
+    //Recursive: isbn bigger (search right tree)
         return searchRec(current.getRight(), isbn);
     }
 
