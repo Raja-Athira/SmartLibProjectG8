@@ -76,11 +76,17 @@ public class Book {
         if (right.equals(child)) right = null;
     }
 
+
+  /* Returns formatted string representation of the book.
+     Format: 'Title' by Author (ISBN: number)
+     return Formatted book details
+     */
     @Override
     public String toString() {
         return "\'" + title + "\' by " + author + " (ISBN: " + isbn + ")";
     }
 
+   // Prints book details to console
     public void printDetails() {
         System.out.println("\'" + title + "\' by " + author + " (ISBN: " + isbn + ")");
     }
