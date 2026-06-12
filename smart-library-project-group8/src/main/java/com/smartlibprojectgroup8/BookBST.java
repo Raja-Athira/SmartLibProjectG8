@@ -92,19 +92,21 @@ public class BookBST {
         return searchRec(root, isbn);
     }
 
+    //case: book not found = null
     private Book searchRec(Book current, int isbn){
         if (current == null){
             return null;
         }
-
+    //case 2: book is found (matching isbn)
         if (isbn == current.getIsbn()){
             return current;
         }
 
+    //Recursive: isbn smaller (search left tree)
         if (isbn < current.getIsbn()){
             return searchRec(current.getLeft(), isbn);
         }
-
+    //Recursive: isbn bigger (search right tree)
         return searchRec(current.getRight(), isbn);
     }
 
