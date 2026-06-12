@@ -1,5 +1,6 @@
 package com.smartlibprojectgroup8;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -165,7 +166,7 @@ public class BookBST {
         String regex = "\\s*\\d+\\s*,\\s*.*\\s*,\\s*.*\\s*";
         ArrayList<Book> booksArray = new ArrayList<>();
         System.out.println("Reading Books from File...");
-        try (BufferedReader Reader = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader Reader = new BufferedReader(new FileReader(new File(filename)))) {
             String line = Reader.readLine();
             while (line != null) {
                 if (line.matches(regex)) {
@@ -182,7 +183,7 @@ public class BookBST {
             System.out.println("Read file successfully: Loading " + booksArray.size() + " books...");
             buildBalancedTree(booksArray);
         } catch (Exception e) {
-            System.out.println("Error reading file! Error stack\n" + e);
+            System.out.println("File not found. Try changing your terminal's directory to this project folder");
         }
     }
 
