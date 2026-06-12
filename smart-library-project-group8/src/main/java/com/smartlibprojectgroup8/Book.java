@@ -11,15 +11,18 @@ public class Book {
     private final String title;
     // Author of the book
     private final String author;
-    // Parent node in BST - used for deletion operations
+    // Parent node in BST (used for deletion operations)
     private Book parent;
+    // refer to left child (books with smaller ISBN)
     private Book left;
+    // refer to right child (books with smaller ISBN)
     private Book right;
 
     public Book(int isbn, String title, String author) {
         this.isbn = isbn;
         this.title = title;
-        this.author = author;
+        this.author = author; 
+    // parent, left, right are null by default
     }
 
     public int getIsbn() { return isbn; }
